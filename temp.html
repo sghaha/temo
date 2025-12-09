@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>랜덤 숫자 룰렛</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
+        }
+        button {
+            padding: 15px 40px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            background-color: #4285F4;
+            color: white;
+            border: none;
+            border-radius: 50px; /* 둥근 버튼 */
+            box-shadow: 0 4px 0 #2a5db0; /* 입체감 */
+            transition: all 0.1s;
+        }
+        button:active {
+            box-shadow: 0 2px 0 #2a5db0;
+            transform: translateY(2px);
+        }
+        /* 버튼이 눌려서 돌아가는 동안 회색으로 변하게 하는 스타일 */
+        button:disabled {
+            background-color: #ccc;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+        #result {
+            margin-top: 40px;
+            font-size: 100px; /* 숫자를 더 크게 */
+            font-weight: bold;
+            color: #333;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <button id="drawBtn" onclick="startRoulette()">룰렛 돌리기!</button>
+
+    <div id="result">Ready</div>
+
+    <script>
+        function startRoulette() {
+            const resultBox = document.getElementById("result");
+            const btn = document.getElementById("drawBtn");
+            
+            // 1. 돌아가는 동안 버튼 못 누르게 막기
+            btn.disabled = true;
+            btn.innerText = "추첨 중...";
+            
+            let speed = 30;  // 시작 속도 (0.03초) - 숫자가 작을수록 빠름
+            
+            // 재귀 함수: 스스로를 계속 호출하면서 속도를 늦춤
+            function runStep() {
+                // 랜덤 숫자 보여주기
+                const randomNumber = Math.floor(Math.random() * 10) + 1;
+                resultBox.innerText = randomNumber;
+                
+                // 속도를 점점 느리게 만듦 (1.1배씩 딜레이 증가)
+                speed = speed * 1.1; 
+
+                // 속도(딜레이)가 400ms(0.4초)보다 작으면 계속 돌림
+                if (speed < 400) {
+                    setTimeout(runStep, speed);
+                } else {
+                    // 2. 멈출 때 처리
+                    btn.disabled = false;
+                    btn.innerText = "다시 뽑기";
+                    resultBox.style.color = "#FF0000"; // 결과 강조 (빨간색)
+                    
+                    // 0.5초 뒤에 다시 검정색으로 복귀 (깜빡이는 효과 대신 깔끔하게)
+                    setTimeout(() => resultBox.style.color = "#333", 500);
+                }
+            }
+
+            // 첫 시작
+            runStep();
+        }
+    </script>
+
+</body>
+</html>
