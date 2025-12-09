@@ -13,6 +13,8 @@
             margin: 0;
             font-family: 'Arial', sans-serif;
             background-color: #f0f2f5;
+            /* 배경을 클릭해도 텍스트 커서가 안 생기게 전체 적용 */
+            user-select: none; 
         }
         button {
             padding: 15px 40px;
@@ -22,15 +24,14 @@
             background-color: #4285F4;
             color: white;
             border: none;
-            border-radius: 50px; /* 둥근 버튼 */
-            box-shadow: 0 4px 0 #2a5db0; /* 입체감 */
+            border-radius: 50px;
+            box-shadow: 0 4px 0 #2a5db0;
             transition: all 0.1s;
         }
         button:active {
             box-shadow: 0 2px 0 #2a5db0;
             transform: translateY(2px);
         }
-        /* 버튼이 눌려서 돌아가는 동안 회색으로 변하게 하는 스타일 */
         button:disabled {
             background-color: #ccc;
             box-shadow: none;
@@ -39,13 +40,17 @@
         }
         #result {
             margin-top: 40px;
-            font-size: 100px; /* 숫자를 더 크게 */
+            font-size: 100px;
             font-weight: bold;
             color: #333;
             height: 120px;
             display: flex;
             align-items: center;
             justify-content: center;
+            
+            /* 핵심 수정 부분: 드래그 방지 및 커서 모양 변경 */
+            user-select: none;  /* 텍스트 선택(드래그) 불가능하게 설정 */
+            cursor: default;    /* 마우스를 올려도 I자가 아닌 화살표 유지 */
         }
     </style>
 </head>
@@ -60,36 +65,27 @@
             const resultBox = document.getElementById("result");
             const btn = document.getElementById("drawBtn");
             
-            // 1. 돌아가는 동안 버튼 못 누르게 막기
             btn.disabled = true;
             btn.innerText = "추첨 중...";
             
-            let speed = 30;  // 시작 속도 (0.03초) - 숫자가 작을수록 빠름
+            let speed = 30;
             
-            // 재귀 함수: 스스로를 계속 호출하면서 속도를 늦춤
             function runStep() {
-                // 랜덤 숫자 보여주기
                 const randomNumber = Math.floor(Math.random() * 10) + 1;
                 resultBox.innerText = randomNumber;
                 
-                // 속도를 점점 느리게 만듦 (1.1배씩 딜레이 증가)
                 speed = speed * 1.1; 
 
-                // 속도(딜레이)가 400ms(0.4초)보다 작으면 계속 돌림
                 if (speed < 400) {
                     setTimeout(runStep, speed);
                 } else {
-                    // 2. 멈출 때 처리
                     btn.disabled = false;
                     btn.innerText = "다시 뽑기";
-                    resultBox.style.color = "#FF0000"; // 결과 강조 (빨간색)
-                    
-                    // 0.5초 뒤에 다시 검정색으로 복귀 (깜빡이는 효과 대신 깔끔하게)
+                    resultBox.style.color = "#FF0000";
                     setTimeout(() => resultBox.style.color = "#333", 500);
                 }
             }
 
-            // 첫 시작
             runStep();
         }
     </script>
